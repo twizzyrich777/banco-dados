@@ -1,48 +1,49 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width">
-  <title>Alunos CETI Raldir Bastos</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width" />
+  <title>Alunos - Acesso Restrito</title>
 
-  <!-- Firebase SDKs (versão compat para HTML puro) -->
+  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
   <style>
     body {
-      font-family: Arial;
-      background: #f2f2f2;
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
       padding: 20px;
     }
 
-    form {
-      background: #fff;
+    .form-container, form {
+      background-color: #fff;
       padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
     }
 
     input {
       display: block;
       width: 100%;
+      padding: 10px;
       margin-bottom: 10px;
-      padding: 8px;
     }
 
     button {
-      background: #4CAF50;
+      background-color: #4CAF50;
       color: white;
-      padding: 10px;
+      padding: 10px 15px;
       border: none;
       border-radius: 5px;
+      cursor: pointer;
     }
 
     table {
       width: 100%;
-      margin-top: 30px;
-      background: white;
       border-collapse: collapse;
+      background-color: #fff;
     }
 
     th, td {
@@ -55,36 +56,63 @@
       background-color: #4CAF50;
       color: white;
     }
+
+    .hidden {
+      display: none;
+    }
   </style>
 </head>
 <body>
-  <h1>Cadastro de Alunos</h1>
 
-  <form id="form-aluno">
-    <input type="text" id="nome" placeholder="Nome" required>
-    <input type="text" id="sala" placeholder="Sala" required>
-    <input type="text" id="serie" placeholder="Série" required>
-    <input type="number" id="idade" placeholder="Idade" required>
-    <button type="submit">Salvar Aluno</button>
-  </form>
+  <h1>Cadastro de Alunos - Acesso Restrito</h1>
 
-  <h2>Alunos Cadastrados</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>Nome</th>
-        <th>Sala</th>
-        <th>Série</th>
-        <th>Idade</th>
-      </tr>
-    </thead>
-    <tbody id="lista-alunos">
-      <!-- Alunos aparecerão aqui -->
-    </tbody>
-  </table>
+  <!-- Tela de login -->
+  <div id="login-form" class="form-container">
+    <p>Digite a chave de acesso:</p>
+    <input type="password" id="aluno123" placeholder="Chave de acesso" />
+    <button onclick="verificarSenha()">Entrar</button>
+    <p id="erro" style="color: red;"></p>
+  </div>
+
+  <!-- Conteúdo principal, escondido até login -->
+  <div id="conteudo" class="hidden">
+    <form id="form-aluno">
+      <input type="text" id="nome" placeholder="Nome" required />
+      <input type="text" id="sala" placeholder="Sala" required />
+      <input type="text" id="serie" placeholder="Série" required />
+      <input type="number" id="idade" placeholder="Idade" required />
+      <button type="submit">Salvar Aluno</button>
+    </form>
+
+    <h2>Alunos Cadastrados</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Sala</th>
+          <th>Série</th>
+          <th>Idade</th>
+        </tr>
+      </thead>
+      <tbody id="lista-alunos"></tbody>
+    </table>
+  </div>
 
   <script>
-    // 🔥 Cole aqui seu firebaseConfig
+    // 🔐 Senha para acessar
+    function verificarSenha() {
+      const senhaCorreta = "raldir123";
+      const senhaDigitada = document.getElementById("aluno123").value;
+
+      if (senhaDigitada === senhaCorreta) {
+        document.getElementById("login-form").style.display = "none";
+        document.getElementById("conteudo").classList.remove("hidden");
+      } else {
+        document.getElementById("erro").textContent = "Chave incorreta.";
+      }
+    }
+
+    // 🔥 Configuração do Firebase (substitua se necessário)
     const firebaseConfig = {
       apiKey: "AIzaSyDvh-v9Sp4QZtJOoGlVW_YruJBojC7hvZM",
       authDomain: "banco-de-dados-15321.firebaseapp.com",
@@ -99,31 +127,31 @@
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
 
-    const form = document.getElementById('form-aluno');
-    const lista = document.getElementById('lista-alunos');
+    // Referências do formulário
+    const form = document.getElementById("form-aluno");
+    const lista = document.getElementById("lista-alunos");
 
-    // Salvar dados no Firebase
-    form.addEventListener('submit', function (e) {
+    // Enviar novo aluno
+    form.addEventListener("submit", function (e) {
       e.preventDefault();
 
       const aluno = {
-        nome: document.getElementById('nome').value,
-        sala: document.getElementById('sala').value,
-        serie: document.getElementById('serie').value,
-        idade: document.getElementById('idade').value,
+        nome: document.getElementById("nome").value,
+        sala: document.getElementById("sala").value,
+        serie: document.getElementById("serie").value,
+        idade: document.getElementById("idade").value
       };
 
-      database.ref('alunos').push(aluno);
-
+      database.ref("alunos").push(aluno);
       form.reset();
     });
 
-    // Exibir dados em tempo real
-    database.ref('alunos').on('value', function(snapshot) {
-      lista.innerHTML = '';
+    // Mostrar alunos em tempo real
+    database.ref("alunos").on("value", function(snapshot) {
+      lista.innerHTML = "";
       snapshot.forEach(function(child) {
         const a = child.val();
-        const linha = `
+        lista.innerHTML += `
           <tr>
             <td>${a.nome}</td>
             <td>${a.sala}</td>
@@ -131,9 +159,9 @@
             <td>${a.idade}</td>
           </tr>
         `;
-        lista.innerHTML += linha;
       });
     });
   </script>
+
 </body>
 </html>
