@@ -64,11 +64,11 @@
 </head>
 <body>
 
-  <h1>Cadastro de Alunos - Acesso Restrito</h1>
+  <h1>Cadastro de Alunos - Acesso Restrito (teste)</h1>
 
   <!-- Tela de login -->
   <div id="login-form" class="form-container">
-    <p>Digite a chave de acesso:</p>
+    <p>Digite a chave de acesso aq:</p>
     <input type="password" id="aluno123" placeholder="Chave de acesso" />
     <button onclick="verificarSenha()">Entrar</button>
     <p id="erro" style="color: red;"></p>
@@ -101,7 +101,7 @@
   <script>
     // 🔐 Senha para acessar
     function verificarSenha() {
-      const senhaCorreta = "raldir123";
+      const senhaCorreta = "aluno123";
       const senhaDigitada = document.getElementById("aluno123").value;
 
       if (senhaDigitada === senhaCorreta) {
@@ -112,7 +112,7 @@
       }
     }
 
-    // 🔥 Configuração do Firebase (substitua se necessário)
+    // Configuração do Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyDvh-v9Sp4QZtJOoGlVW_YruJBojC7hvZM",
       authDomain: "banco-de-dados-15321.firebaseapp.com",
